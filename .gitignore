@@ -1,0 +1,42 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Churn Deuna — .gitignore
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Modelo serializado (muy grande para Git)
+outputs/model/*.pkl
+
+# Datos generados (reproducibles con make model)
+# Descomenta si NO quieres versionar los datos:
+# data/raw/*.csv
+# data/processed/*.parquet
+# outputs/predictions.csv
+# outputs/shap_values.parquet
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Variables de entorno
+.env
+.env.local

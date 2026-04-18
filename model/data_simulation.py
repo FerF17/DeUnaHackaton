@@ -7,16 +7,20 @@ Produce tres tablas:
 """
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
+# Permitir ejecución directa y como módulo
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from config.settings import PATHS, SEED
+
 
 N_MERCHANTS = 2000
 N_MONTHS = 12
-SEED = 42
 
 CORTE_MES_IDX = 10
 
@@ -233,9 +237,9 @@ def generate_churn_labels(
     return corte
 
 
-def main(out_dir: str | Path = "data/raw") -> dict[str, Path]:
+def main(out_dir: str | Path | None = None) -> dict[str, Path]:
     cfg = SimConfig()
-    out_dir = Path(out_dir)
+    out_dir = Path(out_dir) if out_dir else PATHS.RAW_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
 
     merchants = generate_merchants(cfg)

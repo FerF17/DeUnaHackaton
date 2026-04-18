@@ -6,10 +6,15 @@ estadísticos agregados (3m, 6m, 12m), deltas y ratios.
 """
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+# Permitir ejecución directa y como módulo
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from config.settings import PATHS
 
 
 ACTIVITY_METRICS = [
@@ -146,11 +151,11 @@ def build_mdt(
 
 
 def main(
-    raw_dir: str | Path = "data/raw",
-    out_dir: str | Path = "data/processed",
+    raw_dir: str | Path | None = None,
+    out_dir: str | Path | None = None,
 ) -> Path:
-    raw_dir = Path(raw_dir)
-    out_dir = Path(out_dir)
+    raw_dir = Path(raw_dir) if raw_dir else PATHS.RAW_DIR
+    out_dir = Path(out_dir) if out_dir else PATHS.PROCESSED_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
 
     merchants = pd.read_csv(raw_dir / "merchants.csv")

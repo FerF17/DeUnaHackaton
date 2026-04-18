@@ -6,12 +6,16 @@ Genera outputs/predictions.csv consumible por el dashboard.
 """
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import joblib
 import pandas as pd
 
-from train_model import ID_COLS, TARGET, _split_features
+# Permitir ejecución directa y como módulo
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from config.settings import PATHS
+from model.train_model import split_features
 
 
 SEGMENTOS = [
@@ -30,14 +34,18 @@ def _segmentar(prob_rank: float) -> str:
 
 
 def score(
-    mdt_path: str | Path = "data/processed/mdt_churn.parquet",
-    model_path: str | Path = "outputs/model/churn_model.pkl",
-    out_path: str | Path = "outputs/predictions.csv",
+    mdt_path: str | Path | None = None,
+    model_path: str | Path | None = None,
+    out_path: str | Path | None = None,
 ) -> pd.DataFrame:
+    mdt_path = Path(mdt_path) if mdt_path else PATHS.MDT
+    model_path = Path(model_path) if model_path else PATHS.MODEL_PKL
+    out_path = Path(out_path) if out_path else PATHS.PREDICTIONS
+
     mdt = pd.read_parquet(mdt_path)
     pipeline = joblib.load(model_path)
 
-    X, _, _, _ = _split_features(mdt)
+    X, _, _, _ = split_features(mdt)
     proba = pipeline.predict_proba(X)[:, 1]
 
     out = mdt[["comercio_id", "fecha_corte"]].copy()
@@ -54,7 +62,6 @@ def score(
 
     out = out.sort_values("probabilidad_churn", ascending=False).reset_index(drop=True)
 
-    out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(out_path, index=False)
 

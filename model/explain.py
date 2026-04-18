@@ -7,6 +7,7 @@ Genera:
 """
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import joblib
@@ -15,7 +16,10 @@ import numpy as np
 import pandas as pd
 import shap
 
-from train_model import ID_COLS, TARGET, _split_features
+# Permitir ejecución directa y como módulo
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from config.settings import PATHS
+from model.train_model import split_features
 
 
 def _transform(pipeline, X: pd.DataFrame) -> tuple[np.ndarray, list[str]]:
@@ -27,16 +31,21 @@ def _transform(pipeline, X: pd.DataFrame) -> tuple[np.ndarray, list[str]]:
 
 
 def explain(
-    mdt_path: str | Path = "data/processed/mdt_churn.parquet",
-    model_path: str | Path = "outputs/model/churn_model.pkl",
-    fig_dir: str | Path = "outputs/figures",
-    shap_out: str | Path = "outputs/shap_values.parquet",
+    mdt_path: str | Path | None = None,
+    model_path: str | Path | None = None,
+    fig_dir: str | Path | None = None,
+    shap_out: str | Path | None = None,
     sample_size: int = 500,
 ) -> pd.DataFrame:
+    mdt_path = Path(mdt_path) if mdt_path else PATHS.MDT
+    model_path = Path(model_path) if model_path else PATHS.MODEL_PKL
+    fig_dir = Path(fig_dir) if fig_dir else PATHS.FIGURES_DIR
+    shap_out = Path(shap_out) if shap_out else PATHS.SHAP_VALUES
+
     mdt = pd.read_parquet(mdt_path)
     pipeline = joblib.load(model_path)
 
-    X, _, _, _ = _split_features(mdt)
+    X, _, _, _ = split_features(mdt)
     X_sample = X.sample(n=min(sample_size, len(X)), random_state=42)
 
     X_trans, feature_names = _transform(pipeline, X_sample)
@@ -45,7 +54,6 @@ def explain(
     explainer = shap.TreeExplainer(clf)
     shap_values = explainer.shap_values(X_trans)
 
-    fig_dir = Path(fig_dir)
     fig_dir.mkdir(parents=True, exist_ok=True)
 
     plt.figure()
@@ -65,7 +73,6 @@ def explain(
 
     shap_df = pd.DataFrame(shap_values, columns=feature_names, index=X_sample.index)
     shap_df["comercio_id"] = mdt.loc[X_sample.index, "comercio_id"].values
-    shap_out = Path(shap_out)
     shap_out.parent.mkdir(parents=True, exist_ok=True)
     shap_df.to_parquet(shap_out, index=False)
 
@@ -78,6 +85,4 @@ def explain(
 
 
 if __name__ == "__main__":
-    import sys
-    sys.path.insert(0, str(Path(__file__).parent))
     explain()

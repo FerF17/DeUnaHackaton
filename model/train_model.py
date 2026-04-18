@@ -6,6 +6,7 @@ y clasificador XGBoost. Guarda el modelo serializado, métricas y columnas usada
 from __future__ import annotations
 
 import json
+import sys
 from dataclasses import dataclass, asdict
 from pathlib import Path
 
@@ -28,16 +29,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 from xgboost import XGBClassifier
 
-
-TARGET = "churn_30d"
-ID_COLS = ["comercio_id", "fecha_corte"]
-
-CATEGORICAL_COLS = [
-    "mcc_segmento",
-    "region",
-    "tipo_persona",
-    "recencia_bucket_0",
-]
+# Permitir ejecución directa y como módulo
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from config.settings import PATHS, TARGET, ID_COLS, CATEGORICAL_COLS, SEED, TEST_SIZE
 
 
 @dataclass
@@ -54,7 +48,8 @@ class TrainResult:
     churn_rate_test: float
 
 
-def _split_features(mdt: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series, list[str], list[str]]:
+def split_features(mdt: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series, list[str], list[str]]:
+    """Separa features y target. Función pública usada también por predict.py y explain.py."""
     feature_cols = [c for c in mdt.columns if c not in ID_COLS + [TARGET]]
     X = mdt[feature_cols].copy()
     y = mdt[TARGET].astype(int)
@@ -84,7 +79,7 @@ def _build_pipeline(numeric: list[str], categorical: list[str], scale_pos_weight
         eval_metric="auc",
         tree_method="hist",
         n_jobs=-1,
-        random_state=42,
+        random_state=SEED,
     )
     return Pipeline([("pre", pre), ("clf", clf)])
 
@@ -98,14 +93,17 @@ def _pick_threshold(y_true: np.ndarray, y_score: np.ndarray) -> float:
 
 
 def train(
-    mdt_path: str | Path = "data/processed/mdt_churn.parquet",
-    out_dir: str | Path = "outputs/model",
+    mdt_path: str | Path | None = None,
+    out_dir: str | Path | None = None,
 ) -> TrainResult:
+    mdt_path = Path(mdt_path) if mdt_path else PATHS.MDT
+    out_dir = Path(out_dir) if out_dir else PATHS.MODEL_DIR
+
     mdt = pd.read_parquet(mdt_path)
-    X, y, numeric, categorical = _split_features(mdt)
+    X, y, numeric, categorical = split_features(mdt)
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.25, stratify=y, random_state=42,
+        X, y, test_size=TEST_SIZE, stratify=y, random_state=SEED,
     )
 
     pos_weight = float((y_train == 0).sum() / max((y_train == 1).sum(), 1))
@@ -131,7 +129,6 @@ def train(
         churn_rate_test=float(y_test.mean()),
     )
 
-    out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     joblib.dump(pipeline, out_dir / "churn_model.pkl")

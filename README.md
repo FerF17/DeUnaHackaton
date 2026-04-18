@@ -1,8 +1,8 @@
-# Modelo de Churn Deuna — Reto 3 Datos, Interact2Hack 2026
+# 🔮 Modelo de Churn Deuna — Reto 3 Datos, Interact2Hack 2026
 
 **"Antes de que se vayan"** — Scoring predictivo de abandono de comerciantes B2B para Deuna.
 
-El modelo identifica comercios con alto riesgo de dejar de transar en los próximos 30 días y los segmenta en niveles de alerta accionables por el equipo comercial.
+El modelo identifica comercios con alto riesgo de dejar de transar en los próximos 30 días y los segmenta en niveles de alerta accionables por el equipo comercial. El dashboard Streamlit permite visualizar y explorar los resultados.
 
 ---
 
@@ -13,58 +13,104 @@ El modelo identifica comercios con alto riesgo de dejar de transar en los próxi
 | AUC > 0.75 (orientativo) | **AUC 0.885** en test |
 | Variables explicativas coherentes con negocio | Top features: volatilidad de transacciones, recencia, decline rate, tickets de soporte |
 | Plan de acción ejecutable sin recursos nuevos | [docs/plan_accion.md](docs/plan_accion.md) |
-| Output consumible por el equipo de front | [outputs/predictions.csv](outputs/predictions.csv) |
+| Output consumible por el equipo de front | Dashboard Streamlit + [outputs/predictions.csv](outputs/predictions.csv) |
 
 ---
 
-## Estructura
+## Estructura del Proyecto (2 Equipos)
 
 ```
 churn_deuna/
-├── src/
-│   ├── data_simulation.py      Genera dataset sintético (2000 comercios × 12 meses)
-│   ├── feature_engineering.py  MDT con ventanas, deltas, agregados y ratios
-│   ├── train_model.py          XGBoost + métricas + umbral óptimo F1
-│   ├── explain.py              SHAP: importancia global + valores individuales
-│   └── predict.py              Scoring + segmentación (Roja/Amarilla/Baja/Muy Baja)
-├── notebooks/
-│   └── 01_modelo_churn.ipynb   Pipeline end-to-end con EDA
-├── data/
-│   ├── raw/                    merchants.csv, monthly_activity.csv, churn_labels.csv
-│   └── processed/              mdt_churn.parquet
-├── outputs/
-│   ├── model/                  churn_model.pkl, metrics.json
-│   ├── figures/                shap_summary.png, shap_bar.png
-│   ├── predictions.csv         Input para el equipo de dashboard
-│   └── shap_values.parquet     Valores SHAP por comercio (uso individual)
-├── docs/
-│   ├── diccionario_variables.md
-│   └── plan_accion.md
-├── requirements.txt
-└── README.md
+│
+├── config/                          ⚙️  Configuración centralizada
+│   └── settings.py                  Paths, constantes, seed
+│
+├── model/                           🧠 EQUIPO MODELO
+│   ├── data_simulation.py           Genera dataset sintético (2000 comercios × 12 meses)
+│   ├── feature_engineering.py       MDT con ventanas, deltas, agregados y ratios
+│   ├── train_model.py               XGBoost + métricas + umbral óptimo F1
+│   ├── explain.py                   SHAP: importancia global + valores individuales
+│   ├── predict.py                   Scoring + segmentación (Roja/Amarilla/Baja/Muy Baja)
+│   ├── requirements.txt             Dependencias del modelo
+│   └── README.md                    → Guía del equipo modelo
+│
+├── frontend/                        🎨 EQUIPO FRONTEND
+│   ├── app.py                       Landing page del dashboard
+│   ├── pages/
+│   │   ├── 1_📊_Dashboard.py        Vista ejecutiva del churn
+│   │   ├── 2_🔍_Explorador.py       Drill-down por comercio individual
+│   │   └── 3_📈_Modelo.py           Métricas del modelo y SHAP globales
+│   ├── components/                  Gráficos, filtros y KPIs reutilizables
+│   ├── utils/                       Carga de datos desde outputs/
+│   ├── assets/                      CSS custom
+│   ├── requirements.txt             Dependencias del frontend
+│   └── README.md                    → Guía del equipo frontend
+│
+├── data/                            📂 Datos
+│   ├── raw/                         merchants.csv, monthly_activity.csv, churn_labels.csv
+│   └── processed/                   mdt_churn.parquet
+│
+├── outputs/                         🤝 CONTRATO DE INTERFAZ
+│   ├── model/                       churn_model.pkl, metrics.json
+│   ├── figures/                     shap_summary.png, shap_bar.png
+│   ├── predictions.csv              Input para el dashboard
+│   └── shap_values.parquet          Valores SHAP por comercio
+│
+├── notebooks/                       📓 Notebooks
+│   └── 01_modelo_churn.ipynb        Pipeline end-to-end con EDA
+│
+├── docs/                            📖 Documentación
+│   ├── diccionario_variables.md     Diccionario de todas las variables
+│   ├── plan_accion.md               Plan de acción por nivel de riesgo
+│   └── contrato_datos.md            Contrato de interfaz entre equipos
+│
+├── Makefile                         🔧 Orquestación
+├── requirements.txt                 Dependencias globales
+└── .gitignore
+```
+
+### Flujo de datos entre equipos
+
+```
+┌─────────────────────┐         outputs/          ┌─────────────────────┐
+│   🧠 EQUIPO MODELO  │ ──────────────────────▶  │  🎨 EQUIPO FRONTEND │
+│                     │   predictions.csv        │                     │
+│  data_simulation    │   metrics.json           │  app.py             │
+│  feature_eng        │   shap_values.parquet    │  pages/Dashboard    │
+│  train_model        │   shap_*.png             │  pages/Explorador   │
+│  explain            │                          │  pages/Modelo       │
+│  predict            │                          │                     │
+└─────────────────────┘                          └─────────────────────┘
 ```
 
 ---
 
-## Cómo ejecutar
+## Inicio Rápido
 
 ```bash
-# 1. Instalar dependencias
-pip install -r requirements.txt
+# 1. Instalar todo
+make install
 
-# En macOS además:
-brew install libomp
+# 2. Ejecutar pipeline del modelo
+make model
 
-# 2. Pipeline completo (desde la raíz del proyecto)
-python src/data_simulation.py        # Genera datos sintéticos
-python src/feature_engineering.py    # Construye la MDT
-python src/train_model.py            # Entrena XGBoost
-python src/explain.py                # Genera SHAP plots
-python src/predict.py                # Scoring + predictions.csv
-
-# O bien ejecutar el notebook completo:
-jupyter lab notebooks/01_modelo_churn.ipynb
+# 3. Levantar dashboard
+make frontend
 ```
+
+### Comandos disponibles
+
+| Comando | Descripción |
+|---|---|
+| `make install` | Instala dependencias de ambos equipos |
+| `make install-model` | Solo dependencias del modelo |
+| `make install-frontend` | Solo dependencias del frontend |
+| `make model` | Pipeline completo: datos → MDT → XGBoost → SHAP → scoring |
+| `make model-train` | Solo entrena (asume datos existen) |
+| `make frontend` | Levanta el dashboard Streamlit |
+| `make all` | Modelo + frontend |
+| `make clean` | Limpia artefactos generados |
+| `make help` | Lista todos los comandos |
 
 ---
 
@@ -78,6 +124,8 @@ jupyter lab notebooks/01_modelo_churn.ipynb
 | **Segmentación por percentil** | Misma lógica del flujo de referencia (P95/P89/P82). Hace la priorización independiente del volumen absoluto de la cartera. |
 | **Target binario a 30 días** | Alineado con el hilo operativo del reto; se consolida la ventana de acción comercial a 30 días. |
 | **Umbral óptimo F1** | Balancea precisión y recall; se guarda en `metrics.json` para uso del dashboard. |
+| **Streamlit** para dashboard | Framework Python-nativo; permite al equipo de frontend iterar rápido sin JS/HTML. |
+| **Arquitectura 2 equipos** | Separación clara modelo/frontend con contrato de datos. Permite trabajo paralelo sin conflictos. |
 
 ---
 
@@ -93,25 +141,6 @@ jupyter lab notebooks/01_modelo_churn.ipynb
 8. `dias_desde_ult_tx_0` — recencia del mes de corte
 9. `dias_resolucion_soporte_1` — latencia soporte mes anterior
 10. `dias_resolucion_soporte_0` — latencia soporte mes actual
-
-**Coherencia con el negocio:** las señales cardinales son recencia, volatilidad transaccional y fricciones de soporte/autorización — exactamente las identificadas en la literatura B2B de merchant acquiring.
-
----
-
-## Entrega para el equipo de dashboard
-
-El archivo **`outputs/predictions.csv`** contiene una fila por comercio con:
-
-| Columna | Uso en el dashboard |
-|---|---|
-| `comercio_id` | Clave para lookup |
-| `probabilidad_churn` | Score [0,1] — ordenar y colorear |
-| `segmento_churn` | Semáforo (Roja/Amarilla/Baja/Muy Baja) |
-| `mcc_segmento`, `region`, `tipo_persona` | Filtros por dimensión de negocio |
-| `volumen_sum_6m`, `tx_sum_6m` | Priorización por impacto económico |
-| `recencia_bucket_0` | Vista rápida de estado operativo |
-
-Adicionalmente `outputs/shap_values.parquet` permite mostrar, por cada comercio, las 3 razones principales de su riesgo (para el drill-down individual en el dashboard).
 
 ---
 
