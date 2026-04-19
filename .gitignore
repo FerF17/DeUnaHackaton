@@ -17,14 +17,14 @@ venv/
 env/
 
 # Modelo serializado (muy grande para Git)
-outputs/model/*.pkl
+outputs_modelo/*.pkl
 
 # Datos generados (reproducibles con make model)
 # Descomenta si NO quieres versionar los datos:
 # data/raw/*.csv
 # data/processed/*.parquet
-# outputs/predictions.csv
-# outputs/shap_values.parquet
+# outputs_modelo/*.csv
+# outputs_modelo/*.parquet
 
 # IDE
 .vscode/

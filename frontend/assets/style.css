@@ -1,139 +1,527 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   🔮 Churn Deuna — Dashboard Styles
-   Dark mode premium con glassmorphism y acentos de color
+   💜 Churn Deuna — Dashboard Styles
+   Branding oficial DeUna (Banco Pichincha): morado como color primario,
+   gradientes magenta/violeta, fondo oscuro fintech y diseño responsive.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Imports ──────────────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* ── Variables ────────────────────────────────────────────────────────────── */
+/* ── Variables de marca ───────────────────────────────────────────────────── */
 :root {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-card: rgba(30, 41, 59, 0.8);
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --accent-indigo: #6366f1;
-    --accent-purple: #8b5cf6;
-    --danger: #ef4444;
-    --warning: #f59e0b;
-    --success: #10b981;
-    --border-subtle: rgba(148, 163, 184, 0.12);
-    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.25);
-    --radius: 12px;
+    /* Paleta DeUna */
+    --deuna-primary: #4C1D80;          /* Honey Flower — color principal DeUna */
+    --deuna-primary-light: #7C3AED;    /* Violeta vibrante */
+    --deuna-accent: #A855F7;           /* Púrpura luminoso */
+    --deuna-magenta: #EC4899;          /* Acento rosa/magenta */
+    --deuna-gradient: linear-gradient(135deg, #4C1D80 0%, #7C3AED 45%, #EC4899 100%);
+    --deuna-gradient-soft: linear-gradient(135deg, rgba(76, 29, 128, 0.15), rgba(236, 72, 153, 0.12));
+
+    /* Fondos fintech oscuros */
+    --bg-primary: #0B0F19;
+    --bg-secondary: #111827;
+    --bg-tertiary: #1E293B;
+    --bg-card: rgba(30, 27, 56, 0.78);
+    --bg-card-hover: rgba(45, 30, 82, 0.85);
+
+    /* Texto */
+    --text-primary: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted: #94A3B8;
+
+    /* Estados */
+    --danger: #EF4444;
+    --warning: #F59E0B;
+    --success: #10B981;
+    --info: #3B82F6;
+
+    /* Bordes y sombras */
+    --border-subtle: rgba(168, 85, 247, 0.18);
+    --border-strong: rgba(168, 85, 247, 0.35);
+    --shadow-card: 0 4px 24px rgba(15, 10, 35, 0.45);
+    --shadow-hover: 0 14px 42px rgba(124, 58, 237, 0.28);
+    --radius: 14px;
+    --radius-lg: 18px;
 }
 
 /* ── Global ───────────────────────────────────────────────────────────────── */
 .stApp {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(124, 58, 237, 0.18), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, rgba(236, 72, 153, 0.12), transparent 55%),
+        var(--bg-primary) !important;
+    color: var(--text-primary);
+}
+
+/* Ocultar branding Streamlit */
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+
+.block-container {
+    padding-top: 1.25rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 1400px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary) !important;
+    font-family: 'Inter', sans-serif !important;
+    letter-spacing: -0.015em;
 }
 
 /* ── Header ───────────────────────────────────────────────────────────────── */
 .header-container {
     text-align: center;
-    padding: 2rem 1rem 1rem;
+    padding: 2.2rem 1rem 1.2rem;
     margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.header-container::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 3px;
+    background: var(--deuna-gradient);
+    border-radius: 999px;
 }
 
 .header-container h1 {
-    font-size: 2.8rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--accent-indigo), var(--accent-purple), #ec4899);
+    font-size: clamp(1.8rem, 4.5vw, 3rem);
+    font-weight: 800;
+    background: var(--deuna-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.3rem;
+    line-height: 1.1;
+}
+
+.header-container h1 img {
+    filter: drop-shadow(0 6px 14px rgba(124, 58, 237, 0.45));
 }
 
 .header-container .subtitle {
     color: var(--text-secondary);
-    font-size: 1.15rem;
-    font-weight: 300;
-    letter-spacing: 0.05em;
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    margin-top: 0.5rem;
 }
 
-/* ── KPI Cards ────────────────────────────────────────────────────────────── */
+/* ── KPI Grid ─────────────────────────────────────────────────────────────── */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0 1.5rem;
+}
+
 .kpi-card {
     background: var(--bg-card);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius);
-    padding: 1.25rem 1rem;
+    padding: 1.4rem 1.1rem;
     text-align: center;
     box-shadow: var(--shadow-card);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    margin-bottom: 0.5rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--deuna-gradient);
+    opacity: 0.85;
 }
 
 .kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--border-strong);
 }
 
 .kpi-value {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: clamp(1.8rem, 4vw, 2.25rem);
+    font-weight: 800;
     color: var(--text-primary);
-    line-height: 1.2;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
 }
 
 .kpi-label {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-top: 0.35rem;
-    font-weight: 500;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
 }
 
 .kpi-sublabel {
     font-size: 0.75rem;
-    color: var(--text-secondary);
-    margin-top: 0.15rem;
-    opacity: 0.7;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+    opacity: 0.75;
 }
 
-.kpi-danger .kpi-value { color: var(--danger); }
+.kpi-danger::before  { background: linear-gradient(135deg, var(--danger), #B91C1C); }
+.kpi-danger .kpi-value  { color: var(--danger); }
+.kpi-warning::before { background: linear-gradient(135deg, var(--warning), #D97706); }
 .kpi-warning .kpi-value { color: var(--warning); }
+.kpi-success::before { background: linear-gradient(135deg, var(--success), #047857); }
+.kpi-success .kpi-value { color: var(--success); }
 
-/* ── Nav Cards ────────────────────────────────────────────────────────────── */
+/* ── Nav Cards (Landing) ──────────────────────────────────────────────────── */
+.nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
 .nav-card {
     background: var(--bg-card);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius);
-    padding: 1.5rem;
+    padding: 1.4rem 1.3rem;
     box-shadow: var(--shadow-card);
-    transition: all 0.25s ease;
-    min-height: 140px;
+    transition: all 0.3s cubic-bezier(.2,.8,.2,1);
+    min-height: 150px;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-card::after {
+    content: "";
+    position: absolute;
+    inset: auto -30% -60% auto;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.18), transparent 65%);
+    transition: transform 0.4s ease;
+    pointer-events: none;
 }
 
 .nav-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
-    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-4px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-hover);
+    background: var(--bg-card-hover);
+}
+
+.nav-card:hover::after {
+    transform: scale(1.3);
 }
 
 .nav-card h3 {
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.45rem;
     color: var(--text-primary);
 }
 
 .nav-card p {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ── Botones de navegación (st.page_link) ────────────────────────────────── */
+div[data-testid="stPageLink"] > a,
+a[data-testid="stPageLink-NavLink"] {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius) !important;
+    padding: 1rem 1.25rem !important;
+    transition: all 0.3s cubic-bezier(.2,.8,.2,1) !important;
+    box-shadow: var(--shadow-card) !important;
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 64px;
+}
+
+div[data-testid="stPageLink"] > a:hover,
+a[data-testid="stPageLink-NavLink"]:hover {
+    transform: translateY(-2px) !important;
+    border-color: var(--border-strong) !important;
+    box-shadow: var(--shadow-hover) !important;
+    background: var(--bg-card-hover) !important;
+}
+
+/* ── Botones primarios Streamlit ─────────────────────────────────────────── */
+.stButton > button,
+.stDownloadButton > button {
+    background: var(--deuna-gradient) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 0.55rem 1.2rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.015em !important;
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 10px 26px rgba(124, 58, 237, 0.45) !important;
+    filter: brightness(1.08);
+}
+
+.stButton > button:active,
+.stDownloadButton > button:active {
+    transform: translateY(0) !important;
+}
+
+/* ── st.metric (tarjetas nativas) ─────────────────────────────────────────── */
+div[data-testid="stMetric"],
+div[data-testid="metric-container"] {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-left: 4px solid var(--deuna-primary-light);
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s ease;
+}
+
+div[data-testid="stMetric"]:hover,
+div[data-testid="metric-container"]:hover {
+    transform: translateY(-2px);
+}
+
+div[data-testid="stMetricLabel"] p,
+div[data-testid="metric-container"] label {
+    color: var(--text-muted) !important;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+div[data-testid="stMetricValue"] {
+    color: var(--text-primary) !important;
+    font-weight: 800 !important;
 }
 
 /* ── Sidebar ──────────────────────────────────────────────────────────────── */
 section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0F172A 0%, #111827 100%);
     border-right: 1px solid var(--border-subtle);
 }
 
-/* ── Ajustes de DataFrames ────────────────────────────────────────────────── */
-.stDataFrame {
+section[data-testid="stSidebar"] * {
+    color: var(--text-secondary);
+}
+
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3,
+section[data-testid="stSidebar"] h4 {
+    color: var(--text-primary) !important;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────────────────────── */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.65);
+    padding: 8px 10px 0;
+    border-radius: var(--radius) var(--radius) 0 0;
+    border-bottom: 1px solid var(--border-subtle);
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.stTabs [data-baseweb="tab-list"]::-webkit-scrollbar { display: none; }
+
+.stTabs [data-baseweb="tab"] {
+    height: 48px;
+    white-space: nowrap;
+    background-color: transparent;
+    color: var(--text-muted);
+    border-radius: 8px 8px 0 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 18px;
+    border: none;
+    transition: all 0.25s ease;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    color: var(--text-primary);
+    background: rgba(168, 85, 247, 0.08);
+}
+
+.stTabs [aria-selected="true"] {
+    color: var(--text-primary) !important;
+    background: rgba(168, 85, 247, 0.15) !important;
+    border-bottom: 3px solid var(--deuna-accent) !important;
+}
+
+/* ── Inputs, selects, multiselect ─────────────────────────────────────────── */
+div[data-baseweb="select"] > div,
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input {
+    background: var(--bg-tertiary) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 10px !important;
+    color: var(--text-primary) !important;
+}
+
+div[data-baseweb="tag"] {
+    background: rgba(168, 85, 247, 0.22) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-strong) !important;
+}
+
+/* ── DataFrames ───────────────────────────────────────────────────────────── */
+.stDataFrame, div[data-testid="stDataFrame"] {
     border-radius: var(--radius);
     overflow: hidden;
+    border: 1px solid var(--border-subtle);
+}
+
+/* ── Dividers ─────────────────────────────────────────────────────────────── */
+hr, div[data-testid="stMarkdownContainer"] hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+    margin: 1.5rem 0;
+}
+
+/* ── Alerts (info, warning, error, success) ──────────────────────────────── */
+div[data-testid="stAlert"] {
+    border-radius: var(--radius);
+    border: 1px solid var(--border-subtle);
+    backdrop-filter: blur(8px);
+}
+
+/* ── Scrollbars ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--deuna-primary), var(--deuna-accent));
+    border-radius: 10px;
+    border: 2px solid var(--bg-primary);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--deuna-accent); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   📱 Responsive — Mobile first breakpoints
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Tablets (hasta 900px) */
+@media (max-width: 900px) {
+    .block-container {
+        padding-left: 0.9rem !important;
+        padding-right: 0.9rem !important;
+    }
+
+    .header-container {
+        padding: 1.5rem 0.5rem 1rem;
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .nav-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .nav-card {
+        min-height: 130px;
+        padding: 1.1rem 1rem;
+    }
+}
+
+/* Celulares (hasta 600px) */
+@media (max-width: 600px) {
+    .block-container {
+        padding-top: 0.5rem !important;
+    }
+
+    .header-container {
+        padding: 1rem 0.5rem 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .header-container h1 {
+        font-size: 1.6rem;
+        flex-direction: column;
+        gap: 0.4rem !important;
+    }
+
+    .header-container h1 img {
+        width: 40px !important;
+    }
+
+    .header-container .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+    }
+
+    .kpi-card {
+        padding: 1rem 0.7rem;
+    }
+
+    .kpi-value {
+        font-size: 1.5rem;
+    }
+
+    .kpi-label {
+        font-size: 0.7rem;
+    }
+
+    .nav-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-card {
+        min-height: 110px;
+        padding: 1rem;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        padding: 8px 12px;
+        font-size: 0.82rem;
+        height: 44px;
+    }
+
+    /* Métricas de Streamlit apiladas */
+    div[data-testid="stMetric"] {
+        padding: 0.8rem 0.9rem;
+    }
+}
+
+/* Celulares pequeños (hasta 380px) */
+@media (max-width: 380px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
 }
