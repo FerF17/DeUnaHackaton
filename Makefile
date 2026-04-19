@@ -38,11 +38,9 @@ model-data: ## Genera las 3 tablas raw + churn_labels
 model-train: ## Construye MDT, entrena (60/20/20), SHAP y predice
 	$(PYTHON) -m model.feature_engineering
 	$(PYTHON) -m model.train_model
-	$(PYTHON) -m model.explain
-	$(PYTHON) -m model.predict
 
 model: model-data model-train ## Pipeline completo: data → MDT → train → SHAP → scoring
-	@echo "✅ Pipeline completo. Outputs en outputs/"
+	@echo "✅ Pipeline completo. Outputs en outputs_modelo/"
 
 frontend: ## Levanta el dashboard Streamlit
 	@echo "🎨 Levantando dashboard..."
@@ -51,12 +49,12 @@ frontend: ## Levanta el dashboard Streamlit
 all: model frontend ## Pipeline completo + dashboard
 
 clean: ## Limpia artefactos generados
-	rm -rf outputs/model/*.pkl
-	rm -rf outputs/model/*.json
-	rm -rf outputs/figures/*.png
-	rm -rf outputs/predictions.csv
-	rm -rf outputs/shap_values.parquet
-	rm -rf data/raw/*.csv data/raw/*.parquet
-	rm -rf data/processed/*.parquet
-	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	rm -f outputs_modelo/*.pkl
+	rm -f outputs_modelo/*.json
+	rm -f outputs_modelo/*.csv
+	rm -f outputs_modelo/*.parquet
+	rm -f outputs_modelo/*.png
+	rm -f data/raw/*.csv data/raw/*.parquet
+	rm -f data/processed/*.parquet
+	find . -type d -name "__pycache__" -not -path "./.venv/*" -exec rm -rf {} + 2>/dev/null || true
 	@echo "🧹 Limpieza completada."
