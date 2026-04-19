@@ -1,4 +1,4 @@
-"""🏠 Churn Deuna — Dashboard Ejecutivo
+"""🏠 Churn Deuna — Dashboard Ejecutivo 
 
 Landing page del dashboard de predicción de churn de comerciantes B2B.
 Muestra KPIs principales y navegación a las sub-páginas.
